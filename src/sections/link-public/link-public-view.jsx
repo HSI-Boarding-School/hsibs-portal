@@ -7,7 +7,10 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 import { useTheme } from '@mui/material/styles';
+import { useMediaQuery } from '@mui/material';
 import {
   Instagram,
   Youtube,
@@ -18,6 +21,7 @@ import {
   MapPin,
   Phone,
   Mail,
+  Share2,
 } from 'lucide-react';
 
 import { getUserLinks, recordLinkClick } from 'src/lib/supabase-client';
@@ -50,6 +54,9 @@ export function LinkPublicView({ username }) {
   const { user } = useMockedUser();
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [shareSnackbar, setShareSnackbar] = useState(false);
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
     if (user?.id) {
@@ -89,6 +96,30 @@ export function LinkPublicView({ username }) {
     }
   };
 
+  const handleShare = async () => {
+    const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'HSI Boarding School',
+          text: 'Kunjungi portal HSI Boarding School',
+          url: currentUrl,
+        });
+      } catch (error) {
+        console.error('Error sharing:', error);
+      }
+    } else {
+      // Fallback: copy to clipboard
+      try {
+        await navigator.clipboard.writeText(currentUrl);
+        setShareSnackbar(true);
+      } catch (error) {
+        console.error('Error copying to clipboard:', error);
+      }
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -102,9 +133,9 @@ export function LinkPublicView({ username }) {
       <Box
         sx={{
           background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
-          pt: 6,
-          pb: 12,
-          px: 2,
+          pt: { xs: 4, sm: 6, md: 8 },
+          pb: { xs: 8, sm: 10, md: 12 },
+          px: { xs: 2, sm: 3, md: 4 },
           position: 'relative',
           textAlign: 'center',
           overflow: 'hidden',
@@ -131,8 +162,8 @@ export function LinkPublicView({ username }) {
               src="/logo/logohsibs-white.png"
               sx={{
                 position: 'absolute',
-                width: `${80 + (i % 3) * 20}px`,
-                height: `${80 + (i % 3) * 20}px`,
+                width: { xs: `${60 + (i % 3) * 10}px`, md: `${80 + (i % 3) * 20}px` },
+                height: { xs: `${60 + (i % 3) * 10}px`, md: `${80 + (i % 3) * 20}px` },
                 objectFit: 'contain',
                 opacity: 0.1,
                 left: `${(i * 17) % 100}%`,
@@ -147,11 +178,11 @@ export function LinkPublicView({ username }) {
         <Box
           sx={{
             position: 'absolute',
-            top: 20,
+            top: { xs: 10, md: 20 },
             left: '50%',
             transform: 'translateX(-50%)',
-            width: 280,
-            height: 280,
+            width: { xs: 200, md: 280 },
+            height: { xs: 200, md: 280 },
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -167,10 +198,10 @@ export function LinkPublicView({ username }) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '24px',
+              fontSize: { xs: '16px', md: '24px' },
               fontWeight: 'bold',
               color: 'white',
-              letterSpacing: '8px',
+              letterSpacing: { xs: '4px', md: '8px' },
             }}
           >
             BOARDING SCHOOL
@@ -185,26 +216,26 @@ export function LinkPublicView({ username }) {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            mb: 3,
+            mb: { xs: 2, sm: 3 },
           }}
         >
           <Box
             sx={{
               position: 'relative',
-              width: 140,
-              height: 140,
+              width: { xs: 100, sm: 120, md: 140 },
+              height: { xs: 100, sm: 120, md: 140 },
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              mb: 2,
+              mb: { xs: 1.5, sm: 2 },
             }}
           >
             {/* White Circle Background */}
             <Box
               sx={{
                 position: 'absolute',
-                width: 140,
-                height: 140,
+                width: { xs: 100, sm: 120, md: 140 },
+                height: { xs: 100, sm: 120, md: 140 },
                 borderRadius: '50%',
                 bgcolor: 'white',
                 boxShadow: `0 8px 24px rgba(0, 0, 0, 0.15)`,
@@ -215,8 +246,8 @@ export function LinkPublicView({ username }) {
               component="img"
               src="/logo/logohsibs.png"
               sx={{
-                width: 120,
-                height: 120,
+                width: { xs: 80, sm: 100, md: 120 },
+                height: { xs: 80, sm: 100, md: 120 },
                 objectFit: 'contain',
                 position: 'relative',
                 zIndex: 1,
@@ -230,8 +261,8 @@ export function LinkPublicView({ username }) {
             sx={{
               color: 'white',
               fontWeight: 700,
-              letterSpacing: '2px',
-              fontSize: '1.1rem',
+              letterSpacing: { xs: '1px', md: '2px' },
+              fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
             }}
           >
             HSI BOARDING SCHOOL
@@ -241,12 +272,12 @@ export function LinkPublicView({ username }) {
         {/* Contact Icons */}
         <Stack
           direction="row"
-          spacing={3}
+          spacing={{ xs: 2, sm: 2.5, md: 3 }}
           sx={{
             justifyContent: 'center',
             position: 'relative',
             zIndex: 1,
-            mt: 2,
+            mt: { xs: 1.5, sm: 2 },
           }}
         >
           <IconButton
@@ -255,8 +286,8 @@ export function LinkPublicView({ username }) {
             target="_blank"
             rel="noopener noreferrer"
             sx={{
-              width: 56,
-              height: 56,
+              width: { xs: 44, sm: 48, md: 56 },
+              height: { xs: 44, sm: 48, md: 56 },
               bgcolor: 'white',
               color: 'primary.main',
               borderRadius: '50%',
@@ -271,7 +302,7 @@ export function LinkPublicView({ username }) {
             }}
             title="Hubungi via WhatsApp"
           >
-            <LucideIcon icon="solar:phone-bold" width={28} />
+            <LucideIcon icon="solar:phone-bold" width={isMobile ? 20 : 28} />
           </IconButton>
           <IconButton
             component="a"
@@ -279,8 +310,8 @@ export function LinkPublicView({ username }) {
             target="_blank"
             rel="noopener noreferrer"
             sx={{
-              width: 56,
-              height: 56,
+              width: { xs: 44, sm: 48, md: 56 },
+              height: { xs: 44, sm: 48, md: 56 },
               bgcolor: 'white',
               color: 'primary.main',
               borderRadius: '50%',
@@ -295,7 +326,7 @@ export function LinkPublicView({ username }) {
             }}
             title="Hubungi via Email"
           >
-            <LucideIcon icon="solar:mail-bold" width={28} />
+            <LucideIcon icon="solar:mail-bold" width={isMobile ? 20 : 28} />
           </IconButton>
         </Stack>
       </Box>
@@ -307,8 +338,8 @@ export function LinkPublicView({ username }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          px: 2,
-          py: 4,
+          px: { xs: 2, sm: 3, md: 4 },
+          py: { xs: 3, sm: 4, md: 6 },
         }}
       >
         {loading ? (
@@ -317,11 +348,11 @@ export function LinkPublicView({ username }) {
           <Box
             sx={{
               width: '100%',
-              maxWidth: 500,
+              maxWidth: { xs: 400, sm: 500, md: 600 },
             }}
           >
             {/* Links Section */}
-            <Stack spacing={2.5}>
+            <Stack spacing={{ xs: 1.5, sm: 2 }}>
               {links.map((link) => {
                 const IconComponent = getPlatformIcon(link.title);
                 return (
@@ -329,17 +360,17 @@ export function LinkPublicView({ username }) {
                     key={link.id}
                     fullWidth
                     variant="contained"
-                    size="large"
+                    size={isMobile ? 'medium' : 'large'}
                     onClick={() => handleLinkClick(link.id, link.url)}
                     sx={{
-                      py: 2,
-                      px: 2.5,
+                      py: { xs: 1.25, sm: 1.75, md: 2 },
+                      px: { xs: 1.5, sm: 2, md: 2.5 },
                       bgcolor: 'primary.main',
                       color: 'white',
-                      fontSize: '1.1rem',
+                      fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
                       fontWeight: 600,
                       textTransform: 'none',
-                      borderRadius: 2.5,
+                      borderRadius: { xs: 1.5, md: 2.5 },
                       justifyContent: 'space-between',
                       boxShadow: `0 4px 12px rgba(33, 150, 243, 0.25)`,
                       transition: theme.transitions.create(['all'], {
@@ -347,8 +378,8 @@ export function LinkPublicView({ username }) {
                       }),
                       '&:hover': {
                         bgcolor: 'primary.dark',
-                        transform: 'translateY(-4px)',
-                        boxShadow: `0 8px 20px rgba(33, 150, 243, 0.35)`,
+                        transform: 'translateY(-2px)',
+                        boxShadow: `0 6px 16px rgba(33, 150, 243, 0.35)`,
                       },
                     }}
                   >
@@ -356,18 +387,43 @@ export function LinkPublicView({ username }) {
                       sx={{
                         display: 'flex',
                         alignItems: 'center',
-                        gap: 2,
+                        gap: { xs: 1, sm: 1.5 },
                         flex: 1,
                       }}
                     >
-                      <IconComponent size={32} strokeWidth={1.5} />
+                      <IconComponent size={isMobile ? 24 : 32} strokeWidth={1.5} />
                       <Box sx={{ textAlign: 'left', flex: 1 }}>{link.title}</Box>
                     </Box>
-                    <LucideIcon icon="solar:arrow-right-bold" width={24} />
+                    <LucideIcon icon="solar:arrow-right-bold" width={isMobile ? 18 : 24} />
                   </Button>
                 );
               })}
             </Stack>
+
+            {/* Share Button */}
+            <Button
+              fullWidth
+              variant="outlined"
+              size={isMobile ? 'medium' : 'large'}
+              startIcon={<Share2 size={isMobile ? 18 : 24} />}
+              onClick={handleShare}
+              sx={{
+                mt: { xs: 2.5, sm: 3, md: 4 },
+                py: { xs: 1.25, sm: 1.75, md: 2 },
+                borderColor: 'primary.main',
+                color: 'primary.main',
+                fontWeight: 600,
+                textTransform: 'none',
+                borderRadius: { xs: 1.5, md: 2.5 },
+                fontSize: { xs: '0.9rem', sm: '1rem', md: '1.1rem' },
+                '&:hover': {
+                  borderColor: 'primary.dark',
+                  bgcolor: 'primary.lighter',
+                },
+              }}
+            >
+              {isMobile ? 'Share' : 'Share Portal'}
+            </Button>
           </Box>
         )}
       </Box>
@@ -375,7 +431,8 @@ export function LinkPublicView({ username }) {
       {/* Footer */}
       <Box
         sx={{
-          py: 3,
+          py: { xs: 2, sm: 2.5, md: 3 },
+          px: { xs: 2, sm: 3, md: 4 },
           textAlign: 'center',
           bgcolor: 'background.paper',
           borderTop: `1px solid ${theme.palette.divider}`,
@@ -387,11 +444,24 @@ export function LinkPublicView({ username }) {
             color: 'primary.light',
             fontWeight: 600,
             letterSpacing: '0.5px',
+            fontSize: { xs: '0.75rem', sm: '0.875rem' },
           }}
         >
           Powered By HSIBS Portal
         </Box>
       </Box>
+
+      {/* Share Snackbar */}
+      <Snackbar
+        open={shareSnackbar}
+        autoHideDuration={3000}
+        onClose={() => setShareSnackbar(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={() => setShareSnackbar(false)} severity="success" sx={{ width: '100%' }}>
+          Link copied to clipboard!
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
