@@ -1,0 +1,42 @@
+export const _links = [
+  {
+    id: '1',
+    name: 'Instagram',
+    url: 'https://instagram.com',
+    thumbnail: '/assets/icons/platforms/ic_instagram.svg',
+    clicks: 1250,
+    createdAt: new Date('2024-01-15'),
+  },
+  {
+    id: '2',
+    name: 'YouTube',
+    url: 'https://youtube.com',
+    thumbnail: '/assets/icons/platforms/ic_youtube.svg',
+    clicks: 2340,
+    createdAt: new Date('2024-01-20'),
+  },
+  {
+    id: '3',
+    name: 'Twitter',
+    url: 'https://twitter.com',
+    thumbnail: '/assets/icons/platforms/ic_twitter.svg',
+    clicks: 890,
+    createdAt: new Date('2024-02-01'),
+  },
+  {
+    id: '4',
+    name: 'LinkedIn',
+    url: 'https://linkedin.com',
+    thumbnail: '/assets/icons/platforms/ic_linkedin.svg',
+    clicks: 1560,
+    createdAt: new Date('2024-02-10'),
+  },
+  {
+    id: '5',
+    name: 'TikTok',
+    url: 'https://tiktok.com',
+    thumbnail: '/assets/icons/platforms/ic_tiktok.svg',
+    clicks: 3200,
+    createdAt: new Date('2024-02-15'),
+  },
+];

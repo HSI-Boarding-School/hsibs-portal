@@ -1,0 +1,58 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+
+import { paths } from 'src/routes/paths';
+import { useRouter, usePathname } from 'src/routes/hooks';
+
+import { CONFIG } from 'src/global-config';
+
+import { SplashScreen } from 'src/components/loading-screen';
+
+import { useAuthContext } from '../hooks';
+
+// ----------------------------------------------------------------------
+
+const signInPaths = {
+  jwt: paths.login,
+  auth0: paths.login,
+  amplify: paths.login,
+  firebase: paths.login,
+  supabase: paths.login,
+};
+
+export function AuthGuard({ children }) {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const { authenticated, loading } = useAuthContext();
+
+  const [isChecking, setIsChecking] = useState(true);
+
+  const createRedirectPath = (currentPath) => {
+    const queryString = new URLSearchParams({ returnTo: pathname }).toString();
+    return `${currentPath}?${queryString}`;
+  };
+
+  useEffect(() => {
+    if (loading) {
+      return;
+    }
+
+    if (!authenticated) {
+      const { method } = CONFIG.auth;
+      const signInPath = signInPaths[method];
+      const redirectPath = createRedirectPath(signInPath);
+      router.replace(redirectPath);
+      return;
+    }
+
+    setIsChecking(false);
+  }, [authenticated, loading, pathname, router]);
+
+  if (isChecking || loading) {
+    return <SplashScreen />;
+  }
+
+  return <>{children}</>;
+}
