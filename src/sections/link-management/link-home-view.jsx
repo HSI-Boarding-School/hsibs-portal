@@ -105,7 +105,6 @@ export function LinkHomeView() {
             title="Total Links"
             total={totalLinks}
             icon="solar:link-bold"
-            chart={{ series: [{ data: [45] }] }}
           />
         </Grid>
 
@@ -114,7 +113,6 @@ export function LinkHomeView() {
             title="Total Clicks"
             total={totalClicks}
             icon="solar:cursor-bold"
-            chart={{ series: [{ data: [45] }] }}
             sx={{
               bgcolor: 'background.paper',
               '& > div:last-child': {

@@ -6,25 +6,12 @@ import Stack from '@mui/material/Stack';
 import { useTheme } from '@mui/material/styles';
 
 import { LucideIcon } from 'src/components/lucide-icon';
-import { Chart, useChart } from 'src/components/chart';
 import { svgColorClasses } from 'src/components/svg-color';
 
 // ----------------------------------------------------------------------
 
-export function LinkWidgetSummary({ title, total, icon, chart, sx, ...other }) {
+export function LinkWidgetSummary({ title, total, icon, sx, ...other }) {
   const theme = useTheme();
-
-  const chartOptions = useChart({
-    chart: { sparkline: { enabled: true } },
-    colors: [theme.palette.primary.main],
-    plotOptions: { bar: { columnWidth: '68%' } },
-    tooltip: {
-      y: {
-        formatter: (value) => `${value}`,
-      },
-    },
-    ...chart,
-  });
 
   return (
     <Card
@@ -57,6 +44,7 @@ export function LinkWidgetSummary({ title, total, icon, chart, sx, ...other }) {
           alignItems: 'center',
           justifyContent: 'center',
           color: 'primary.main',
+          flexShrink: 0,
           [`& .${svgColorClasses.root}`]: {
             width: 32,
             height: 32,
@@ -65,16 +53,6 @@ export function LinkWidgetSummary({ title, total, icon, chart, sx, ...other }) {
       >
         <LucideIcon icon={icon} />
       </Box>
-
-      {chart && chart.series && (
-        <Box sx={{ width: 100, height: 60, ml: 2 }}>
-          <Chart 
-            type="bar" 
-            series={chart.series} 
-            options={chartOptions} 
-          />
-        </Box>
-      )}
     </Card>
   );
 }
